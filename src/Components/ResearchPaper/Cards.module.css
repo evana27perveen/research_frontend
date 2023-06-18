@@ -1,0 +1,97 @@
+.container {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -15px;
+  }
+  
+  .col_md-4 {
+    flex: 0 0 33.33%;
+    max-width: 33.33%;
+    padding: 0 15px;
+  }
+  
+  .card {
+    border: 1px solid rgb(88, 188, 235);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  
+  .card-body {
+    padding: 20px;
+    text-align: center; 
+  }
+  
+  .card-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    justify-content: center;
+  }
+  
+  .card-text {
+    font-size: 16px;
+    margin-bottom: 10px;
+    justify-content: center;
+  }
+  
+  .card-link {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    
+  }
+  
+  .card-link:hover {
+    background-color: #0056b3;
+  }
+  
+  .error-message {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .pdf-preview {
+    width: 350px;
+    height: 300px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    overflow: hidden;
+  }
+
+  .col-md-4 {
+    flex: 0 0 33.33%;
+    max-width: 33.33%;
+    padding: 0 15px;
+  }
+
+  .col-md-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+    padding: 0 15px;
+  }
+
+  .view-pdf-button {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+    padding: 5px;
+    border: 1px solid rgb(88, 188, 235);
+  }
+  
+  .view-pdf-button:hover {
+    background-color: rgb(88, 188, 235);
+  }

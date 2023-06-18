@@ -1,23 +1,28 @@
-import logo from './logo.svg';
+
 import './App.css';
+import Login from './Components/AuthScreens/Login';
+import Signup from './Components/AuthScreens/Signup';
+import Home from './Components/HomeScreen/Home';
+import AddNew from './Components/ResearchPaper/AddNew';
+import ResearcherProfile from './Components/ProfileScreens/ResearcherProfile';
+import ResearcherProfileDisplay from './Components/ProfileScreens/ResearcherProfileDisplay';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/add-new" element={<AddNew />} />
+          <Route path="/researcher-profile" element={<ResearcherProfile />} />
+          <Route path="/researcher-profile-display" element={<ResearcherProfileDisplay />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
