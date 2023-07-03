@@ -10,14 +10,12 @@ function Login() {
   const [password, setPassword] = useState('')
   const [token, setToken] = useCookies(['myToken'])
   const [group, setGroup] = useCookies(['myGroup'])
-  const [profile, setProfile] = useCookies(['myGroup'])
-  let navigate = useNavigate()
-  const [isLogin, setLogin] = useState(true)
+  const [profile, setProfile] = useCookies(['myProfile']);
+  let navigate = useNavigate();
 
 
   useEffect(() => {
     let user_token = token['myToken'];
-    let user_group = group['myGroup'];
 
     if (String(user_token) === 'undefined') {
       navigate('/login');
@@ -33,10 +31,33 @@ function Login() {
         .then(resp => {
           console.log(resp.access)
           console.log(username)
-          setToken('myToken', resp.access)
-          setGroup('myGroup', resp.group)
-          setProfile('myProfile', "False");
-          console.log(group);
+          setToken('myToken', resp.access);
+          setGroup('myGroup', resp.group);
+          console.log('token.myToken');
+          console.log(resp.access);
+          console.log('token.myToken');
+          const fetchData = async () => {
+            try {
+              const response = await fetch('http://127.0.0.1:8000/api/user-home-data/', {
+                method: 'GET',
+                headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${resp.access}`,
+                },
+              });
+              const data = await response.json();
+        
+              if (data !== null) {
+                setProfile('profile', data.profile);
+                console.log(profile['profile']);
+              }
+            } catch (error) {
+              console.log('Error fetching data:', error);
+            }
+          };
+        
+          fetchData();
         })
         .catch(error => console.log(error))
     } else {
@@ -44,6 +65,7 @@ function Login() {
       navigate('/login/')
     }
   }
+
 
   return (
     <div className={styles.body}>
@@ -279,9 +301,12 @@ function Login() {
 
                 <input type="password" name="password" placeholder="Password" required value={password} onChange={e => setPassword(e.target.value)} />
 
+
                 <button type="Submit" id={styles.log}>Login</button>
               </form>
               <p>Don't have an account? <Link to='/signup' style={{textDecoration: 'none', color: "yellow", fontWeight: 'bold'}}>Sign up Now!!!</Link></p>
+              <br/>
+              <p>Are You a Visitor???  <Link to='/home' style={{textDecoration: 'none', color: "yellow", fontWeight: 'bold'}}>Get a Quick View!!!</Link></p>
             </div>
           </div>
 

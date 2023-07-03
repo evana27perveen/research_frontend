@@ -3,34 +3,36 @@ import styles from './Signup.module.css';
 
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { useCookies } from 'react-cookie'
-import APIContext from '../APIContext'
+import APIContext from '../APIContext';
 
 function Signup() {
   const [username, setUsername] = useState('')
   const [password1, setPassword1] = useState('')
   const [password2, setPassword2] = useState('')
-  const [token, setToken] = useCookies(['mytoken'])
   let navigate = useNavigate()
-  const [isLogin, setLogin] = useState(true)
+  const [group, setGroup] = useState('')
 
   const handleFormSubmission = e => {
     e.preventDefault();
-    const group_name  = 'RESEARCHER';
+    let group_name = group
     if (username.trim().length !== 0 && password1.trim().length && password2.trim().length) {
-      console.log('Email And Password Are Set')
+      console.log('Email And Password Are Set');
 
       APIContext.RegisterNewUser({ username, password1, group_name })
         .then(resp => {
-            console.log(resp)
-          resp['Success'] ? navigate('/login') :  alert("Registration Failed");
+            console.log(resp);
+          resp['username'] ? navigate('/login') :  alert("Registration Failed");
         })
-        .catch(error => console.log(error))
+        .catch(error => console.log(error));
     } else {
-      alert('Email And Password Are Not Set')
-      navigate('/signup')
+      alert('Email And Password Are Not Set');
+      navigate('/signup');
     }
   }
+
+  const handleGroupChange = (e) => {
+    setGroup(e.target.value);
+  };
 
   return (
     <div className={styles.body}>
@@ -267,6 +269,31 @@ function Signup() {
                 <input type="password" name="password" placeholder="Password" required value={password1} onChange={e => setPassword1(e.target.value)} />
 
                 <input type="password" name="password2" placeholder="Confirm Password" required value={password2} onChange={e => setPassword2(e.target.value)} />
+
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', flex: 1,  }}>
+                <label style={{ justifyContent: 'right' }}>
+                    <input
+                      type="radio"
+                      name="group"
+                      value="RESEARCHER"
+                      checked={group === 'RESEARCHER'}
+                      onChange={handleGroupChange}
+                      required
+                    />
+                    --I'm A RESEARCHER
+                  </label>
+                  <label style={{ marginLeft: '10px' }}>
+                    <input
+                      type="radio"
+                      name="group"
+                      value="READER"
+                      checked={group === 'READER'}
+                      onChange={handleGroupChange}
+                      required
+                    />
+                    --I'm A READER
+                  </label>
+                </div>
 
                 <button type="Submit" id={styles.log}>Signup</button>
               </form>

@@ -1,18 +1,18 @@
 import React from 'react';
 import styles from './Home.module.css';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Cards from '../ResearchPaper/Cards';
 import { useCookies } from 'react-cookie';
 import Header from './Header';
+import Footer from './Footer';
 
 const Home = () => {
-
   const [token] = useCookies(['myToken']);
-
+  
 
   return (
     <div className={styles.body}>
-      <Header/>
+      <Header />
 
       <section id={styles.welcome_section} className={`${styles.center} ${styles.section}`}>
         <div id={styles.main_text}>
@@ -31,13 +31,13 @@ const Home = () => {
         <div id={styles.hero_image}></div>
         {token['myToken'] ? (
           <Link id={styles.get_started_btn} to="/add-new" style={{ textDecoration: 'none' }}>
-                  Add New
-                </Link>
-              ) : (
-                <Link id={styles.get_started_btn} to="/signup" style={{ textDecoration: 'none' }}>
-                  Get Started
-                </Link>
-              )}
+            Add New
+          </Link>
+        ) : (
+          <Link id={styles.get_started_btn} to="/signup" style={{ textDecoration: 'none' }}>
+            Get Started
+          </Link>
+        )}
       </section>
 
       <section id="responsive" className={`${styles.center} ${styles.section}`}>
@@ -53,10 +53,14 @@ const Home = () => {
           <img className={styles.section_img} src="Responsive.png" alt="" />
         </div>
       </section>
-
       <section className={`${styles.center} ${styles.section}`}>
+      
         <Cards />
       </section>
+
+      
+        <Footer />
+      
     </div>
   );
 };

@@ -1,24 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import styles from './Cards.module.css';
-import { Document, Page, pdfjs } from 'react-pdf';
+import styles from './ReadAll.module.css';
 import { useCookies } from 'react-cookie';
+import { Document, Page, pdfjs } from 'react-pdf';
 import { Link } from 'react-router-dom';
+import Header from '../HomeScreen/Header';
+import Footer from '../HomeScreen/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComments } from '@fortawesome/free-solid-svg-icons';
 
-
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-const Cards = () => {
+const ReadAll = () => {
+  const [token] = useCookies(['myToken']);
   const [researchPapers, setResearchPapers] = useState([]);
   const [error, setError] = useState('');
-  const [token] = useCookies(['myToken']);
   const [inputs, setInputs] = useState({});
 
   useEffect(() => {
     const fetchResearchPapers = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/research-data/', {
+        const response = await fetch("http://127.0.0.1:8000/api/research-papers/", {
           method: 'GET',
           headers: {
             Accept: 'application/json',
@@ -30,7 +31,7 @@ const Cards = () => {
         }
         const data = await response.json();
 
-        const researchPapersWithUrls = await Promise.all(
+        const researchPapersWithAuthorData = await Promise.all(
           data.research_papers.map(async (paper) => {
             const authorResponse = await fetch(`http://127.0.0.1:8000/api/author-info/${paper.author}/`, {
               method: 'GET',
@@ -44,27 +45,27 @@ const Cards = () => {
             }
             const authorData = await authorResponse.json();
 
-            const commentResponse = await fetch(`http://127.0.0.1:8000/api/comment-count/${paper.id}/`, {
-              method: 'GET',
-              headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-              },
-            });
-                
-            const commentData = await commentResponse.json();
-          return {
-            ...paper,
-            file: `http://127.0.0.1:8000${paper.file}`, 
-            authorName: authorData.full_name,
-            country: authorData.country,
-            comments: commentData.comments
-          };
-        })
+        const commentResponse = await fetch(`http://127.0.0.1:8000/api/comment-count/${paper.id}/`, {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+        });
+            
+          const commentData = await commentResponse.json();
+            return {
+              ...paper,
+              file: new URL(paper.file, 'http://127.0.0.1:8000'),
+              authorName: authorData.full_name,
+              country: authorData.country,
+              comments: commentData.comments
+            };
+          })
         );
 
-        setResearchPapers(researchPapersWithUrls);
-        console.log(researchPapersWithUrls);
+        setResearchPapers(researchPapersWithAuthorData);
+        console.log(researchPapersWithAuthorData);
       } catch (error) {
         setError('Error fetching research papers');
         console.error('Error fetching research papers:', error);
@@ -72,7 +73,7 @@ const Cards = () => {
     };
 
     fetchResearchPapers();
-  }, [token.myToken]);
+  }, []);
 
   const handleInputChange = (e, researchID) => {
     const { value } = e.target;
@@ -115,25 +116,30 @@ const Cards = () => {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.row}>
-        {error && <p className={styles['error-message']}>{error}</p>}
-        {researchPapers.map((researchPaper) => (
-          <div className={styles['col-md-4']} key={researchPaper.id}>
-            <div className={styles.card}>
-              <div className={styles['card-body']}>
-                <h5 className={styles['card-title']}>{researchPaper.title}</h5>
-                <p className={styles['card-text']}>Topic: {researchPaper.Topic}</p>
-                <p className={styles['card-author']}>Author: {researchPaper.authorName} ({researchPaper.country})</p>
-                <p className={styles['card-date']}>{researchPaper.publication_date}</p>
-                <div className={styles['pdf-preview']}>
-                  <Document file={researchPaper.file}>
-                    <Page pageNumber={1} width={350} height={400} renderTextLayer={false} />
-                  </Document>
-                </div>
+    <div>
+      <Header />
+      <div className={styles.section}>
+        <div className={styles.container}>
+          <div className={styles.row}>
+            {error && <p className={styles['error-message']}>{error}</p>}
+            {researchPapers.map((researchPaper) => (
+              <div className={styles['col-md-4']} key={researchPaper.id}>
+                <div className={styles.card}>
+                  <div className={styles['card-body']}>
+                    <div className={styles['card-head']}>
+                      <p className={styles['card-date']}>{researchPaper.publication_date}</p>
+                      <h5 className={styles['card-title']}>Title: {researchPaper.title}</h5>
+                      <p className={styles['card-text']}>Topic: {researchPaper.Topic}</p>
+                      <p className={styles['card-author']}>Author: {researchPaper.authorName} ({researchPaper.country})</p>
+                    </div>
+                    <div className={styles['pdf-preview']}>
+                      <Document file={researchPaper.file.toString()}>
+                        <Page pageNumber={1} width={350} height={400} renderTextLayer={false} />
+                      </Document>
+                    </div>
                     <div className={styles['view-pdf-button']}>
                       <Link
-                        to={researchPaper.file}
+                        to={researchPaper.file.toString()}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{ textDecoration: 'none', fontWeight: 'bold', color: 'white', width: '100%' }}
@@ -151,7 +157,8 @@ const Cards = () => {
                         {' '}( {researchPaper.comments} )
                       </Link>
                     </div>
-                {token['myToken'] && (
+                    
+                    {token['myToken'] && (
                       <div className={styles['comment-button']}>
                       <form className={styles['form']}>
                         <input type="hidden" name="research-id" required value={researchPaper.id} />
@@ -177,13 +184,16 @@ const Cards = () => {
 
                       </div>
                     )}
+                  </div>
+                </div>
               </div>
-            </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
+      <Footer />
     </div>
   );
 };
 
-export default Cards;
+export default ReadAll;

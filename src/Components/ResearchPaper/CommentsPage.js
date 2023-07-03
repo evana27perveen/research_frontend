@@ -1,78 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import styles from './Cards.module.css';
+import styles from './CommentsPage.module.css';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { useCookies } from 'react-cookie';
 import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import Header from '../HomeScreen/Header';
+import Footer from '../HomeScreen/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComments } from '@fortawesome/free-solid-svg-icons';
 
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-const Cards = () => {
-  const [researchPapers, setResearchPapers] = useState([]);
-  const [error, setError] = useState('');
+const CommentsPage = () => {
+  const { researchPaperId } = useParams();
+  const [comments, setComments] = useState([]);
+  const [researchPaper, setResearchPaper] = useState(null);
   const [token] = useCookies(['myToken']);
   const [inputs, setInputs] = useState({});
 
   useEffect(() => {
-    const fetchResearchPapers = async () => {
+    const fetchComments = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/research-data/', {
-          method: 'GET',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-        });
-        if (!response.ok) {
-          throw new Error('Failed to fetch research papers');
-        }
+        const response = await fetch(`http://127.0.0.1:8000/api/comments/${researchPaperId}/`);
         const data = await response.json();
-
-        const researchPapersWithUrls = await Promise.all(
-          data.research_papers.map(async (paper) => {
-            const authorResponse = await fetch(`http://127.0.0.1:8000/api/author-info/${paper.author}/`, {
-              method: 'GET',
-              headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-              },
-            });
-            if (!authorResponse.ok) {
-              throw new Error('Failed to fetch author data');
-            }
-            const authorData = await authorResponse.json();
-
-            const commentResponse = await fetch(`http://127.0.0.1:8000/api/comment-count/${paper.id}/`, {
-              method: 'GET',
-              headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-              },
-            });
-                
-            const commentData = await commentResponse.json();
-          return {
-            ...paper,
-            file: `http://127.0.0.1:8000${paper.file}`, 
-            authorName: authorData.full_name,
-            country: authorData.country,
-            comments: commentData.comments
-          };
-        })
-        );
-
-        setResearchPapers(researchPapersWithUrls);
-        console.log(researchPapersWithUrls);
+        setComments(data.comments);
+        setResearchPaper(data.research_paper);
       } catch (error) {
-        setError('Error fetching research papers');
-        console.error('Error fetching research papers:', error);
+        console.error('Error fetching comments:', error);
       }
     };
 
-    fetchResearchPapers();
-  }, [token.myToken]);
+    fetchComments();
+  }, [researchPaperId, comments]);
 
   const handleInputChange = (e, researchID) => {
     const { value } = e.target;
@@ -81,6 +41,7 @@ const Cards = () => {
       [researchID]: value,
     }));
   };
+
 
   const handleSubmitComment = async (e, researchID) => {
     e.preventDefault();
@@ -116,24 +77,24 @@ const Cards = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.row}>
-        {error && <p className={styles['error-message']}>{error}</p>}
-        {researchPapers.map((researchPaper) => (
-          <div className={styles['col-md-4']} key={researchPaper.id}>
+      <Header />
+      <div className={styles.commentsContainer}>
+        <div className={styles.researchPaperCard}>
+          {researchPaper && (
+            <div>
             <div className={styles.card}>
               <div className={styles['card-body']}>
                 <h5 className={styles['card-title']}>{researchPaper.title}</h5>
                 <p className={styles['card-text']}>Topic: {researchPaper.Topic}</p>
-                <p className={styles['card-author']}>Author: {researchPaper.authorName} ({researchPaper.country})</p>
-                <p className={styles['card-date']}>{researchPaper.publication_date}</p>
+                <p className={styles['card-date']}>{new Date(researchPaper.publication_date).toLocaleString()}</p>
                 <div className={styles['pdf-preview']}>
-                  <Document file={researchPaper.file}>
-                    <Page pageNumber={1} width={350} height={400} renderTextLayer={false} />
-                  </Document>
+                    <Document file={`http://127.0.0.1:8000${researchPaper.file}`}>
+                    <Page pageNumber={1} width={500} height={400} renderTextLayer={false} />
+                    </Document>
                 </div>
                     <div className={styles['view-pdf-button']}>
                       <Link
-                        to={researchPaper.file}
+                        to={`http://127.0.0.1:8000${researchPaper.file}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{ textDecoration: 'none', fontWeight: 'bold', color: 'white', width: '100%' }}
@@ -141,15 +102,7 @@ const Cards = () => {
                       >
                        View Research-Paper
                       </Link>
-                      <Link
-                        to={`/comments/${researchPaper.id}/`}
-                        rel="noopener noreferrer"
-                        style={{ textDecoration: 'none', color: 'white', width: '100%', }}
-                        className={styles['link-comments']}
-                      >
-                        <FontAwesomeIcon icon={faComments} size="md" className={styles.icon} />
-                        {' '}( {researchPaper.comments} )
-                      </Link>
+                      
                     </div>
                 {token['myToken'] && (
                       <div className={styles['comment-button']}>
@@ -179,11 +132,37 @@ const Cards = () => {
                     )}
               </div>
             </div>
-          </div>
-        ))}
+              
+            </div>
+          )}
+        </div>
+        <div className={styles.commentsSection}>
+          <h2 className={styles.commentsTitle}>Comments</h2>
+          {comments.length === 0 ? (
+            <p>No comments found.</p>
+          ) : (
+            <ul className={styles.commentsList}>
+              {comments.map((comment) => (
+                <li key={comment.id} className={styles.commentItem}>
+                  <p className={styles.commentAuthor}>{comment.author}</p>
+                  <p className={styles.commentText}>{comment.comment}</p>
+                  <p className={styles.commentDate}>
+                    {new Date(comment.created_at).toLocaleString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: 'numeric',
+                    })}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
-export default Cards;
+export default CommentsPage;

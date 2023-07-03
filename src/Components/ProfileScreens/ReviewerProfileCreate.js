@@ -1,22 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useCookies } from 'react-cookie';
-import styles from './ResearcherProfile.module.css';
+import styles from './ReviewerProfileCreate.module.css';
 import Header from '../HomeScreen/Header';
+import { useNavigate } from 'react-router-dom'
 
-const ResearcherProfile = () => {
+const ReviewerProfileCreate = () => {
   const [token] = useCookies(['myToken']);
-  const [profile, setProfile] = useCookies(['myProfile'])
   const [fullName, setFullName] = useState('');
   const [gender, setGender] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [institute, setInstitute] = useState('');
   const [address, setAddress] = useState('');
   const [country, setCountry] = useState('');
+  const [profile, setProfile] = useCookies(['myProfile']);
+
+
+  let navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState('');
 
 
   const createProfile = async () => {
+    setErrorMessage('');
     try {
-      const response = await fetch('http://127.0.0.1:8000/auth/researcher-profiles/', {
+      const response = await fetch('http://127.0.0.1:8000/auth/reviewer-profiles/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -32,12 +38,15 @@ const ResearcherProfile = () => {
         }),
       });
       if (response.ok) {
-        setProfile('myProfile', "True");
+        setProfile('profile', "True");
+        navigate('/home');
       } else {
         console.log('Failed to create profile');
+        setErrorMessage('Failed to add research paper. Please try again later.');
       }
     } catch (error) {
       console.log('Error creating profile:', error);
+      setErrorMessage('Failed to add research paper. Please try again later.');
     }
   };
 
@@ -84,8 +93,9 @@ const ResearcherProfile = () => {
         <button type="submit">Create</button>
       </form>
     </div>
+    {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
     </div>
   );
 };
 
-export default ResearcherProfile;
+export default ReviewerProfileCreate;

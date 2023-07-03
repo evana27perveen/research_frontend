@@ -1,32 +1,89 @@
+/* CommentsPage.module.css */
+
 .container {
-  display: flex;
-  justify-content: center;
-  margin: 10px;
+  overflow-y: hidden!important;
+  overflow-x: hidden!important;
 }
 
-.row {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
+.commentsContainer {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+  }
   
-}
+  .researchPaperCard {
+    flex: 1;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .researchPaperTitle {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .researchPaperDescription {
+    font-size: 16px;
+    color: #555555;
+    margin-bottom: 10px;
+  }
+  
+  .commentsSection {
+    flex: 1;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    white-space: nowrap;
+    max-height: 410px!important;
+  }
+  
+  .commentsTitle {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .commentsList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .commentItem {
+    margin-bottom: 15px;
+  }
+  
+  .commentAuthor {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .commentText {
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+  
+  .commentDate {
+    font-size: 12px;
+    color: #999999;
+  }
+  
 
-.col_md-4,
-.col-md-6 {
-  flex: 0 0 33.33%;
-  max-width: 33.33%;
-  padding: 0 15px;
-}
-
-.card {
-  border: 1px solid rgb(88, 188, 235);
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-  margin-left: 10px!important;
-  margin-right: 10px!important;
-  width: fit-content;
-}
+  .card {
+    border: 1px solid rgb(88, 188, 235);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    
+    margin-left: 10px;
+    margin-right: 10px;
+  }
   
   .card-body {
     padding: 20px;
@@ -34,18 +91,16 @@
   }
   
   .card-title {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: bold;
     margin-bottom: 10px;
     justify-content: center;
-  }
-  .card-author {
-    font-size: 12px;
-    margin-bottom: 5px;
-    color: #033142!important;
-    max-width: 250px;
     text-align: left;
-    font-weight: bold;
+    color: #033142!important;
+  }
+
+  .card-head{
+    justify-content: space-between;
   }
   
   .card-text {
@@ -55,7 +110,6 @@
     max-width: 250px;
     text-align: left;
     font-weight: bold;
-    width: 100%;
     overflow-x: auto;
     white-space: nowrap;
     max-height: 30px;
@@ -80,30 +134,32 @@
   .card-text::-webkit-scrollbar-thumb:hover {
     background-color: #555; 
   }
+  
 
   .card-date {
     font-size: 12px;
     margin-bottom: 5px;
-    justify-content: right;
-    color: #033142!important;
-    float: right;
-    margin-right: 15px;
+    background: linear-gradient(to right, #f8f5f5, yellow) !important;
+    -webkit-background-clip: text;
     margin-left: 15px;
+    text-align: right;
+    height: 20px;
+    color: black!important;
     font-weight: bold;
-
   }
+  
 
   .card-status {
     font-size: 16px;
     margin-bottom: 10px;
+    margin-top: 10px;
     justify-content: center;
     padding-left: 10px;
     padding-right: 10px;
     padding-top: 5px;
     padding-bottom: 5px;
-    background-color: #033142!important;
+    background-color: #045775!important;
     color: white!important;
-    
   }
   
   .card-link {
@@ -114,7 +170,6 @@
     text-decoration: none;
     border-radius: 4px;
     font-weight: bold;
-    
   }
   
   .card-link:hover {
@@ -130,25 +185,13 @@
   }
   
   .pdf-preview {
-    width: 350px;
+    width: 100%;
     height: 250px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
     overflow: hidden;
   }
-
-  .col-md-4 {
-    flex: 0 0 33.33%;
-    max-width: 33.33%;
-    padding: 0 15px;
-  }
-
-  .col-md-6 {
-    flex: 0 0 50%;
-    max-width: 50%;
-    padding: 0 15px;
-  }
-
+  
   .view-pdf-button {
     display: flex;
     flex-direction: row;
@@ -156,9 +199,19 @@
     margin-top: 15px;
     background-color: white!important;
     
-    
   }
+  
 
+  
+  .section {
+    width: 100%;
+    font-size: 1.6rem;
+    padding: 4rem 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
   .comment-button {
     display: flex;
     align-items: center;
@@ -208,9 +261,10 @@
   color: white!important;
   align-items: center;
   justify-content: center!important;
-  height: 100%!important;
-  width: 70%!important;
+  height: 100%;
+  width: 100%!important;
   padding: 5px;
+  font-size: 14px;
 }
 
 .link-view:hover {
@@ -223,7 +277,7 @@
   color: white!important;
   align-items: center;
   justify-content: center!important;
-  height: 100%!important;
+  height: 100%;
   width: 30%!important;
   padding: 5px;
   font-size: 12px;

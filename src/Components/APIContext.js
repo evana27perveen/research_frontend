@@ -17,7 +17,7 @@ export class APIContext {
             },
             body:JSON.stringify({
                 'group_name' : body_['group_name'],
-                'username': body_['email'],
+                'username': body_['username'],
                 'password': body_['password1'],
             })
         }).then(resp => resp.json())
